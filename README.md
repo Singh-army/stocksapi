@@ -17,8 +17,9 @@ Monorepo with a PHP backend (auto-deployed on your hosting) and a Next.js fronte
 - Build locally: `npm run build`; preview: `npm run dev`.
 - Cloudflare Pages settings:
   - Framework: Next.js
-  - Build command: `npm run build`
-  - Build output directory: `.next` (Cloudflare handles Next output internally)
+  - Build command: `npm install && npm run build`
+  - Deploy command: `echo "Deploy handled by Cloudflare Pages"`
+  - Build output directory: leave empty (Pages handles Next output internally)
   - Root directory: `frontend`
   - Env var: `NEXT_PUBLIC_API_BASE_URL=https://globalmarketpulse.net`
 - After linking repo, pushes trigger Cloudflare deploys; verify API calls hit the PHP backend domain.

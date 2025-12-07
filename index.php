@@ -72,12 +72,12 @@ if (str_starts_with($uri, '/api/hello')) {
 <body>
     <main class="card">
         <h1>Global Market Pulse backend</h1>
-        <p class="muted">PHP API entrypoint is live. Frontend calls can point at <code><?= htmlspecialchars($_SERVER['HTTP_HOST'] ?? 'globalmarketpulse.net') ?></code>.</p>
-        <p>Test the API endpoint:</p>
+        <p class="muted">PHP API entrypoint is live. The Next.js frontend (Cloudflare Pages) should call this host via <code><?= htmlspecialchars($_SERVER['HTTP_HOST'] ?? 'globalmarketpulse.net') ?></code>.</p>
+        <p>Test the API endpoint to confirm connectivity:</p>
         <div class="actions">
             <a class="button" href="/api/hello">View <code>/api/hello</code></a>
         </div>
-        <p class="muted">Deploy: push to git and wait ~10s for the PHP host to auto-pull.</p>
+        <p class="muted">Deploy: push to git and wait ~10s for the PHP host to auto-pull. Frontend deploys from the same repo via Cloudflare Pages.</p>
     </main>
 </body>
 </html>

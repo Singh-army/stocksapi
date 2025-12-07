@@ -30,8 +30,8 @@ export default function Home() {
         <div className="badge">Frontend · Cloudflare</div>
         <h1>Welcome to Global Market Pulse</h1>
         <p>
-          This Next.js frontend is ready to fetch data from the PHP backend deployed at
-          <code className="code">{API_BASE}</code>.
+          This Next.js frontend is talking to the PHP backend at
+          <code className="code">{API_BASE}</code>. The welcome data below is parsed live from the backend JSON.
         </p>
         <p className="muted">{apiStatus}</p>
         {error && <p className="error">Error: {error}</p>}
