@@ -1,54 +1,80 @@
 import { useEffect, useState } from 'react';
+import Head from 'next/head';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://globalmarketpulse.net';
 
 export default function Home() {
-  const [apiStatus, setApiStatus] = useState('Contacting backend…');
-  const [apiData, setApiData] = useState(null);
-  const [error, setError] = useState('');
+  const [config, setConfig] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const controller = new AbortController();
-    fetch(`${API_BASE}/api/hello`, { signal: controller.signal })
-      .then(async (res) => res.json())
-      .then((data) => {
-        setApiData(data);
-        setApiStatus(`Connected to backend at ${API_BASE}`);
+    fetch(`${API_BASE}/api/webapp/config`)
+      .then((res) => {
+        if (!res.ok) throw new Error('Failed to fetch config');
+        return res.json();
       })
-      .catch((err) => {
-        if (err.name !== 'AbortError') {
-          setApiStatus('Unable to reach backend');
-          setError(err.message || 'Request failed');
+      .then((payload) => {
+        if (payload.data) {
+          setConfig(payload.data);
+        } else {
+          throw new Error('Invalid config format');
         }
-      });
-    return () => controller.abort();
+      })
+      .catch((err) => setError(err.message))
+      .finally(() => setLoading(false));
   }, []);
+
+  if (loading) return <div className="page"><main className="card"><p>Loading configuration...</p></main></div>;
+  if (error) return <div className="page"><main className="card"><p className="error">Error loading site: {error}</p></main></div>;
+  if (!config) return null;
+
+  const { meta, home } = config;
 
   return (
     <div className="page">
+      <Head>
+        <title>{meta.title}</title>
+        <meta name="description" content={meta.description} />
+      </Head>
+
       <main className="card">
-        <div className="badge">Frontend · Cloudflare</div>
-        <h1>Welcome to Global Market Pulse</h1>
-        <p>
-          This Next.js frontend is talking to the PHP backend at
-          <code className="code">{API_BASE}</code>. The welcome data below is parsed live from the backend JSON.
-        </p>
-        <p className="muted">{apiStatus}</p>
-        {error && <p className="error">Error: {error}</p>}
-        {apiData && (
-          <pre className="payload" aria-label="API payload">
-            {JSON.stringify(apiData, null, 2)}
-          </pre>
-        )}
+        <div className="badge">Frontend · Config Driven</div>
+        <h1>{home.hero.title}</h1>
+        <p>{home.hero.subtitle}</p>
+
+        <div className="features">
+          {home.features && home.features.map((feature, idx) => (
+            <div key={idx} className="feature-item">
+              <strong>{feature.title}</strong>
+            </div>
+          ))}
+        </div>
+
         <div className="actions">
-          <a href={`${API_BASE}/api/hello`} target="_blank" rel="noreferrer" className="button">
-            Open backend /api/hello
+          <a href={home.hero.ctaLink} className="button">
+            {home.hero.ctaText}
           </a>
-          <a href="https://developers.cloudflare.com/pages" target="_blank" rel="noreferrer" className="secondary">
-            View Cloudflare Pages guide
+          <a href={`${API_BASE}/api/webapp/config`} target="_blank" rel="noreferrer" className="secondary">
+            View Raw Config
           </a>
         </div>
       </main>
+
+      <style jsx>{`
+        .features {
+            display: flex;
+            gap: 1rem;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+        .feature-item {
+            background: #f1f5f9;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+      `}</style>
     </div>
   );
 }
