@@ -1,0 +1,15 @@
+/vendor
+/node_modules
+/frontend/.next
+/frontend/.turbo
+/frontend/.env.local
+/frontend/.env.development.local
+/frontend/.env.production.local
+/frontend/.env.test.local
+/.DS_Store
+/.idea
+/.vscode
+composer.lock
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
