@@ -3,20 +3,22 @@ import { useEffect, useState } from 'react';
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://globalmarketpulse.net';
 
 export default function Home() {
-  const [apiStatus, setApiStatus] = useState('Loading...');
+  const [apiStatus, setApiStatus] = useState('Contacting backend…');
   const [apiData, setApiData] = useState(null);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const controller = new AbortController();
     fetch(`${API_BASE}/api/hello`, { signal: controller.signal })
-      .then(async (res) => {
-        const data = await res.json();
+      .then(async (res) => res.json())
+      .then((data) => {
         setApiData(data);
         setApiStatus(`Connected to backend at ${API_BASE}`);
       })
       .catch((err) => {
         if (err.name !== 'AbortError') {
-          setApiStatus(`Unable to reach backend at ${API_BASE}`);
+          setApiStatus('Unable to reach backend');
+          setError(err.message || 'Request failed');
         }
       });
     return () => controller.abort();
@@ -32,6 +34,7 @@ export default function Home() {
           <code className="code">{API_BASE}</code>.
         </p>
         <p className="muted">{apiStatus}</p>
+        {error && <p className="error">Error: {error}</p>}
         {apiData && (
           <pre className="payload" aria-label="API payload">
             {JSON.stringify(apiData, null, 2)}

@@ -77,6 +77,11 @@ p {
   font-size: 0.95rem;
 }
 
+.error {
+  color: #b91c1c;
+  font-weight: 600;
+}
+
 .actions {
   display: flex;
   gap: 0.75rem;
